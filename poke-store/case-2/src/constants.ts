@@ -1,4 +1,4 @@
-import type {Pokemon} from "./types";
+import type { Pokemon } from "./types";
 
 export const POKEMONS: Pokemon[] = [
   {
@@ -8,6 +8,7 @@ export const POKEMONS: Pokemon[] = [
     description:
       "Bulbasaur es un Pokémon cuadrúpedo de color verde y manchas más oscuras de formas geométricas.",
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png`,
+    quantity: 0,
   },
   {
     id: "4",
@@ -16,6 +17,7 @@ export const POKEMONS: Pokemon[] = [
     description:
       "Charmander es un pequeño lagarto bípedo. Sus características de fuego son resaltadas por su color de piel anaranjado y su cola con la punta envuelta en llamas.",
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png`,
+    quantity: 0,
   },
   {
     id: "7",
@@ -24,6 +26,7 @@ export const POKEMONS: Pokemon[] = [
     description:
       "Squirtle es una de las especies más difíciles de encontrar. Habita tanto aguas dulces como marinas, preferiblemente zonas bastante profundas.",
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png`,
+    quantity: 0,
   },
   {
     id: "25",
@@ -32,6 +35,7 @@ export const POKEMONS: Pokemon[] = [
     description:
       "Pikachu almacena una gran cantidad de electricidad en sus mejillas. Estas parecen cargarse eléctricamente durante la noche mientras duerme.",
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png`,
+    quantity: 0,
   },
   {
     id: "133",
@@ -40,6 +44,7 @@ export const POKEMONS: Pokemon[] = [
     description:
       "Eevee es un Pokémon de tipo normal que se asemeja en tamaño y forma a un pequeño zorro.",
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png`,
+    quantity: 0,
   },
   {
     id: "54",
@@ -48,5 +53,6 @@ export const POKEMONS: Pokemon[] = [
     description:
       "Se alimenta de peces que quedan atontados en las rocas o que accidentalmente chocan con él.",
     image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png`,
+    quantity: 0,
   },
 ];
