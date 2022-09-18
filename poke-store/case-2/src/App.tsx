@@ -20,21 +20,19 @@ function App() {
     setCart((cart) => [...cart, pokemon]);
   }, []);
 
-  const handleIncrement = useCallback((pokemon: Pokemon) => {
+  const handleIncrement = useCallback((id: Pokemon["id"]) => {
     setCart((cart) =>
       cart.map((poke) =>
-        poke.id === pokemon.id ? { ...poke, quantity: poke.quantity + 1 } : poke
+        poke.id === id ? { ...poke, quantity: poke.quantity + 1 } : poke
       )
     );
   }, []);
 
-  const handleDecrement = useCallback((pokemon: Pokemon) => {
+  const handleDecrement = useCallback((id: Pokemon["id"]) => {
     setCart((cart) =>
       cart
         .map((poke) =>
-          poke.id === pokemon.id
-            ? { ...poke, quantity: poke.quantity - 1 }
-            : poke
+          poke.id === id ? { ...poke, quantity: poke.quantity - 1 } : poke
         )
         .filter((poke) => poke.quantity)
     );
