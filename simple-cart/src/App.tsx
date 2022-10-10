@@ -1,27 +1,77 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 import api from "./api";
-import { Product, CartItem } from "./types";
-
+import { Product, CartItem, Action } from "./types";
 import styles from "./index.module.scss";
+
+const initialState: CartItem[] = [];
+
+const handleIncrement = (product: CartItem, cart: CartItem[]) => {
+  return cart.map((item) =>
+    item.id == product.id
+      ? {
+          ...item,
+          quantity: item.quantity + 1,
+        }
+      : item
+  );
+};
+
+const handleDecrement = (product: CartItem, cart: CartItem[]) => {
+  return cart
+    .map((item) =>
+      item.id == product.id
+        ? {
+            ...item,
+            quantity: item.quantity - 1,
+          }
+        : item
+    )
+    .filter((item) => item.quantity);
+};
+
+const handleAdd = (product: Product, cart: CartItem[]) => {
+  const productFinded = cart.find((item) => item.id === product.id);
+
+  if (productFinded) return cart;
+
+  return cart.concat({ ...product, quantity: 1 });
+};
+
+const cartReducer = (state: CartItem[], action: Action): CartItem[] => {
+  switch (action.type) {
+    case "add": {
+      return handleAdd(action.product as Product, state);
+    }
+    case "increment": {
+      return handleIncrement(action.product as CartItem, state);
+    }
+    case "decrement": {
+      return handleDecrement(action.product as CartItem, state);
+    }
+    default: {
+      throw Error("Unknown action: " + action.type);
+    }
+  }
+};
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, dispatch] = useReducer(cartReducer, initialState);
 
   useEffect(() => {
     api.list().then(setProducts);
   }, []);
 
-  const handleAdd = (product: Product) => {
-    const productFinded = cart.find((item) => item.id === product.id);
+  const isInCart = useCallback(
+    (id: Product["id"]) => Boolean(cart.find((item) => item.id === id)),
+    [cart]
+  );
 
-    if (productFinded) return;
-
-    const cartItem = { ...product, quantity: 1 };
-
-    setCart((products) => products.concat(cartItem));
-  };
+  const getItemQtty = useCallback(
+    (id: Product["id"]) => cart.find((item) => item.id === id)?.quantity,
+    [cart]
+  );
 
   const cartTotal = useMemo(() => {
     const cartSum = cart.reduce(
@@ -29,46 +79,11 @@ function App() {
       0
     );
 
-    console.log(cart);
     return new Intl.NumberFormat("es-AR", {
       style: "currency",
       currency: "ARS",
     }).format(cartSum);
   }, [cart]);
-
-  const isInCart = (id: Product["id"]) =>
-    Boolean(cart.find((item) => item.id === id));
-
-  const handleIncrement = (id: CartItem["id"]) => {
-    setCart((products) =>
-      products.map((item) =>
-        item.id == id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item
-      )
-    );
-  };
-
-  const handleDecrement = (id: CartItem["id"]) => {
-    setCart((products) =>
-      products
-        .map((item) =>
-          item.id == id
-            ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
-            : item
-        )
-        .filter((item) => item.quantity)
-    );
-  };
-
-  const getItemQtty = (id: Product["id"]) =>
-    cart.find((item) => item.id === id)?.quantity;
 
   return (
     <main className={styles.main}>
@@ -85,14 +100,24 @@ function App() {
               <div>
                 <button
                   className={styles.button}
-                  onClick={() => handleDecrement(product.id as CartItem["id"])}
+                  onClick={() =>
+                    dispatch({
+                      type: "decrement",
+                      product,
+                    })
+                  }
                 >
                   -
                 </button>
                 <p className={styles.quantity}>{getItemQtty(product.id)}</p>
                 <button
                   className={styles.button}
-                  onClick={() => handleIncrement(product.id as CartItem["id"])}
+                  onClick={() =>
+                    dispatch({
+                      type: "increment",
+                      product,
+                    })
+                  }
                 >
                   +
                 </button>
@@ -100,7 +125,12 @@ function App() {
             ) : (
               <button
                 className={styles.button}
-                onClick={() => handleAdd(product)}
+                onClick={() =>
+                  dispatch({
+                    type: "add",
+                    product,
+                  })
+                }
               >
                 Agregar
               </button>
