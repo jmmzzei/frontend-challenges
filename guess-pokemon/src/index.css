@@ -1,0 +1,27 @@
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  flex-direction: column;
+  padding: 24px;
+}
+
+img {
+  image-rendering: pixelated;
+}
+
+.shallowImg {
+  height: 60px;
+  width: 60px;
+  background: #b2b2b2;
+  margin: 0 auto;
+  margin-bottom: 5px;
+}
+
+.shallowName {
+  height: 20px;
+  width: 100px;
+  background: #b2b2b2;
+  margin-bottom: 5px;
+}
