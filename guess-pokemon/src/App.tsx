@@ -32,12 +32,31 @@ const usePoke = () => {
   return { pokemon, refetch: fetchPoke };
 };
 
+type Counter = {
+  aciertos: number;
+  errores: number;
+};
+
+const getCounterObj = (counter: Counter, match: boolean) => {
+  let key = match ? "aciertos" : "errores";
+
+  return { ...counter, [key]: counter[key] + 1 };
+};
+
 function App() {
   const {
     pokemon: { data, status },
     refetch,
   } = usePoke();
   const [guess, setGuess] = useState("");
+  const [counter, setCounter] = useState<Counter>(
+    () =>
+      JSON.parse(localStorage.getItem("counter")) || { aciertos: 0, errores: 0 }
+  );
+
+  useEffect(() => {
+    localStorage.setItem("counter", JSON.stringify(counter));
+  }, [counter]);
 
   if (status === "rejected") return null;
   if (status === "loading") return <div>Cargando...</div>;
@@ -49,15 +68,27 @@ function App() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setGuess(e.target["guess"].value.toLowerCase());
+    const guessValue = e.target["guess"].value.toLowerCase();
+
+    setGuess(guessValue);
+    setCounter((counter) => getCounterObj(counter, guessValue == data?.name));
+
     e.target["guess"].value = "";
   };
 
   return (
     <main>
+      <section>
+        <div>aciertos: {counter.aciertos}</div>
+        <div>errores: {counter.errores}</div>
+      </section>
       Let&apos;s get this party started
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input name="guess" type="text" />
+      <form onSubmit={handleSubmit}>
+        <input
+          name="guess"
+          type="text"
+          onFocus={() => guess && handleReplay()}
+        />
         <button type="submit">Submit Guess</button>
       </form>
       <button onClick={handleReplay}>Replay</button>
@@ -67,7 +98,7 @@ function App() {
 }
 
 type CardProps = {
-  pokemon: Pokemon;
+  pokemon: Pokemon | null;
   guess: string;
 };
 
